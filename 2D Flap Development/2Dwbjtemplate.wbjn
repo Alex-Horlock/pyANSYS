@@ -1,0 +1,34 @@
+﻿# encoding: utf-8
+SetScriptVersion(Version="15.0")
+
+import os
+
+#Creates a fluid-flow fluent Template structure
+template1 = GetTemplate(TemplateName="Fluid Flow")
+system1 = template1.CreateSystem()
+
+#Import the geometry from My documents + FilePath
+#The GEOMETRYHERE should be replaced with the correct geometry for the job
+geometry1 = GetDataContainer("Geometry")
+geometry1.SetFile("H:/AUTOMESH/BASEHERE/Geometry/GEOMETRYHERE.SLDPRT")
+
+#toggle between 2D and 3D system
+geometryProperties1 = geometry1.GetGeometryProperties()
+geometryProperties1.GeometryImportAnalysisType = "AnalysisType_2D"
+
+#Import Named Selections for SolidWorks **Note to create the named selections on a 2D plane in solidworks 
+#Get rid of the sketch lines first because Ansys doesn't like this
+geometryProperties1.GeometryImportNamedSelections = True
+geometryProperties1.GeometryImportNamedSelectionsFilter = ""
+geometryProperties1.GeometryImportCoordinateSystems = True
+geometryProperties1.GeometryImportSmartUpdate = True
+
+# opens up the mesher for editing
+mesh1 = system1.GetContainer(ComponentName="Mesh")
+component1 = system1.GetComponent(Name="Mesh")
+component1.Update(AllDependencies=True)
+
+#The MESHJSSCRIPT should be replaced with the correct meshing macro for the job
+mesh1.Edit()
+mesh1.SendCommand(Command="WB.AppletList.Applet(\"DSApplet\").App.Script.doToolsRunMacro(\"MESHJSSCRIPT\")")
+mesh1.Exit()

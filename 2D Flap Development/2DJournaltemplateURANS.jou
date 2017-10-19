@@ -1,0 +1,267 @@
+;Python replaces MESHPATH with correct mesh file name
+file/read-case /home/ah12g11/2DAuto/MESHPATH/Meshs/SAVENAME.msh
+;
+;make solid into fluid
+define/boundary-conditions/modify-zones/zone-type 4 fluid
+;
+mesh/repair-improve/allow-repair-at-boundaries y
+mesh/repair-improve/repair
+;
+;
+mesh/check
+mesh/mesh-info 0
+mesh/reorder/reorder-domain
+mesh/reorder/reorder-domain
+;
+;Refine mesh in the Wake Region
+adapt/mark-inout-rectangle y n 9 13.94 1.15 2.35
+adapt/adapt-to-register 0 0 0 y
+;
+adapt/mark-inout-rectangle y n 8.9 9 1.625 1.875
+adapt/adapt-to-register 0 0 0 y
+adapt/mark-inout-rectangle y n 8.9 9 1.625 1.875
+adapt/adapt-to-register 0 0 0 y
+;
+mesh/repair-improve/repair
+mesh/repair-improve/repair
+;
+mesh/check
+mesh/mesh-info 0
+mesh/reorder/reorder-domain
+mesh/reorder/reorder-domain
+;
+define/materials/change-create air air y constant 1.19 n n y constant 0.0000182 n n n
+;
+define/models/unsteady-2nd-order-bounded y
+define/models/viscous/kw-sst y
+;
+define/boundary-conditions/list-zones
+define/boundary-conditions/velocity-inlet inlet n y y n 0 n 30 n 0 n n y 0.2 10
+;
+report/reference-values/compute/velocity-inlet inlet
+; ref length is 2.535 but for cd we need area 0.4. this is worked into python.
+report/reference-values/area 2.535
+report/reference-values/length 2.535 
+report/reference-values/density 1.19
+report/reference-values/temperature 292.5
+report/reference-values/viscosity 0.0000182
+;
+;Define Discretisation Schemes
+solve/set/discretization-scheme/mom 1
+solve/set/discretization-scheme/k 1
+solve/set/discretization-scheme/omega 1
+;
+;Activate SIMPLEC
+solve/set/p-v-coupling 21
+;
+;solve/set/reporting-interval 10
+solve/monitors/residual/convergence-criteria 1e-4 1e-6 1e-6 1e-6 1e-6
+;
+;*****************************************************************************
+;
+solve/monitors/force/set-drag-monitor cd-1 y flap1 flap2 trailer cabin () y y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-cd-history.txt n y 1 0
+solve/monitors/force/set-lift-monitor cl-check y flap1 flap2 trailer cabin () n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-cl-history.txt n y 0 1
+solve/monitors/force/set-lift-monitor cl-single y flap1 () n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-flap-cl-history.txt n y 0 1
+;
+;
+;Plot Horizontal Lines
+surface/line-surface line1 5.94 1.953 9.27 1.953
+surface/line-surface line2 5.94 1.85 9.27 1.85
+surface/line-surface line3 5.94 1.75 9.27 1.75
+surface/line-surface line4 5.94 1.65 9.27 1.65
+surface/line-surface line5 5.94 1.547 9.27 1.547
+surface/line-surface line6 8.97 1.15 8.97 2.35 
+surface/line-surface line7 9.07 1.15 9.07 2.35
+surface/line-surface line8 9.27 1.15 9.27 2.35
+surface/line-surface line9 9.67 1.15 9.67 2.35
+;
+;setup pressure monitors
+surface/point-surface P1 6.891 1.65
+surface/point-surface P2 6.891 1.75
+surface/point-surface P3 6.891 1.85
+surface/point-surface P4 8.842 1.951
+surface/point-surface P5 8.873 1.91
+surface/point-surface P6 8.873 1.83
+surface/point-surface P7 8.873 1.71
+surface/point-surface P8 8.873 1.63
+surface/point-surface P9 8.842 1.549
+surface/point-surface P5 9.273 1.91
+surface/point-surface P6 9.273 1.83
+surface/point-surface P7 9.273 1.71
+surface/point-surface P8 9.273 1.63
+;
+;
+solve/monitors/surface/set-monitor P1 "Area-Weighted Average" pressure P1 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP1.txt 1 y flow-time
+solve/monitors/surface/set-monitor P2 "Area-Weighted Average" pressure P2 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP2.txt 1 y flow-time
+solve/monitors/surface/set-monitor P3 "Area-Weighted Average" pressure P3 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP3.txt 1 y flow-time
+solve/monitors/surface/set-monitor P4 "Area-Weighted Average" pressure P4 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP4.txt 1 y flow-time
+solve/monitors/surface/set-monitor P5 "Area-Weighted Average" pressure P5 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP5.txt 1 y flow-time
+solve/monitors/surface/set-monitor P6 "Area-Weighted Average" pressure P6 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP6.txt 1 y flow-time
+solve/monitors/surface/set-monitor P7 "Area-Weighted Average" pressure P7 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP7.txt 1 y flow-time
+solve/monitors/surface/set-monitor P8 "Area-Weighted Average" pressure P8 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP8.txt 1 y flow-time
+solve/monitors/surface/set-monitor P9 "Area-Weighted Average" pressure P9 () n n y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-pressureP9.txt 1 y flow-time
+
+
+;
+;
+solve/initialize/hyb-initialization
+;
+report/summary y /home/ah12g11/2DAuto/MESHPATH/DragData/SAVENAME-Report
+;
+;file/auto-save/data-frequency 200
+;file/auto-save/case-frequency each-time
+;file/auto-save/retain-most-recent-files y
+;file/auto-save/max-files 2
+;file/auto-save/root-name /home/ah12g11/2DAuto/MESHPATH/CaseData/0SAVENAME
+;
+;setup image capture
+display/set/picture/x-resolution 2880
+display/set/picture/y-resolution 1800
+display/set/contours/filled-contours y
+display/set/contours/clip-to-range n
+;
+;add commands
+solve/execute-commands/add-edit command-start 100 "time-step" "display/views/restore-view/front"
+solve/execute-commands/add-edit command-1 100 "time-step" "display/views/camera/target 8 1.75 0"
+solve/execute-commands/add-edit command-2 100 "time-step" "display/views/camera/zoom 6"
+solve/execute-commands/add-edit command-3 100 "time-step" "display/contour/total-pressure -500 550"
+solve/execute-commands/add-edit command-4 100 "time-step" "display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Total_Pressure-%t.jpg"
+;Solve Transient
+solve/set/data-sampling y 1 y y
+solve/set/time-step 0.000001
+solve/set/adaptive-time-stepping y n 0.01 1.68 0.000001 0.001 0.5 2 5
+solve/dual-time-iterate 560000 10
+;
+;
+;
+file/write-case-data /home/ah12g11/2DAuto/MESHPATH/CaseData/SAVENAME
+;
+;record computer usage
+parallel/timer/usage
+;Define directions of vorticity
+define/custom-field-functions/define "dirvorticity" dx_velocity_dy-dy_velocity_dx
+;
+;
+;Save pressure xy plots of lines
+;
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine1 n n n pressure y 1 0 line1 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine1
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine1.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine2 n n n pressure y 1 0 line2 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine2
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine2.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine3 n n n pressure y 1 0 line3 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine3
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine3.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine4 n n n pressure y 1 0 line4 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine4
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine4.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine5 n n n pressure y 1 0 line5 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine5
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine5.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine6 n y 1 0 n n pressure line6 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine6
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine6.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine7 n y 1 0 n n pressure line7 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine7
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine7.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine8 n y 1 0 n n pressure line8 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine8
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine8.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine9 n y 1 0 n n pressure line9 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine9
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-PressureLine9.jpg
+;
+;
+;
+;Save xvelocity XY plots of lines
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine1 n n n x-velocity y 1 0 line1 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine1
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine1.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine2 n n n x-velocity y 1 0 line2 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine2
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine2.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine3 n n n x-velocity y 1 0 line3 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine3
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine3.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine4 n n n x-velocity y 1 0 line4 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine4
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine4.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine5 n n n x-velocity y 1 0 line5 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine5
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine5.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XVelLine6 n y 1 0 n n x-velocity line6 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine6
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine6.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine7 n y 1 0 n n x-velocity line7 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine7
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine7.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine8 n y 1 0 n n x-velocity line8 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine8
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine8.jpg
+plot/plot y /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine9 n y 1 0 n n x-velocity line9 ()
+plot/file /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine9
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/GraphData/SAVENAME-XvelLine9.jpg
+;
+;
+;Save Pictures
+display/set/picture/x-resolution 2880
+display/set/picture/y-resolution 1800
+display/set/contours/filled-contours y
+display/set/contours/clip-to-range n
+;defaultnumber of contours
+;display/set/contours/n-contour 20
+;
+display/views/camera/target 8 1.75 0
+display/views/camera/zoom 6
+;
+display/set/picture/color-mode/mono-chrome
+display/mesh
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Mesh.jpg
+display/set/picture/color-mode/color
+;
+display/contour/pressure -2500 550
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Pressure.jpg
+;
+display/contour/total-pressure -2500 550
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Total_Pressure.jpg
+;
+display/contour/xvelocity -5 35
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-xvelocity.jpg
+;
+display/contour/dirvorticity -800 800
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-DirVorticity.jpg
+;
+;Image the wake region
+;
+display/views/camera/target 9.2 1.75 0
+display/views/camera/zoom 2
+;
+display/set/picture/color-mode/mono-chrome
+display/mesh
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-WakeMesh.jpg
+display/set/picture/color-mode/color
+;
+display/contour/pressure -2500 550
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-WakePressure.jpg
+;
+display/contour/xvelocity -5 35
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Wakexvelocity.jpg
+;
+display/contour/dirvorticity -800 800
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-WakeDirVorticity.jpg
+;
+;Image the Flap
+;
+display/views/camera/target 8.95 1.95 0
+display/views/camera/zoom 14
+;
+display/set/picture/color-mode/mono-chrome
+display/mesh
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-FlapMesh.jpg
+display/set/picture/color-mode/color
+;
+display/vector/velocity/velocity 0 52 7 0
+display/save-picture /home/ah12g11/2DAuto/MESHPATH/ImageData/SAVENAME-Flapvectors.jpg
+;
+exit y

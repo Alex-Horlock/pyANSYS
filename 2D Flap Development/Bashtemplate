@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#PBS -l nodes=1:ppn=16
+
+#PBS -l walltime=24:00:00  
+
+#specifies the wall time which the simulation will run for before being kicked out.
+
+
+cd $PBS_O_WORKDIR # this changes the directory for the job to that from which the job was submitted
+
+nprocs=`wc -l $PBS_NODEFILE | awk '{ print $1 }'` #calculates the number of processors required
+
+module load fluent/15.0  #loads the fluent module necessary for work (i may have this autoloaded)
+
+fluent 2ddp -t$nprocs -gu -i /home/ah12g11/2DAuto/BASEHERE/Journals/JOURNAL.jou > /home/ah12g11/2DAuto/BASEHERE/Journals/JOURNAL.txt
+
+#/home/ah12g11/lorryjournal.fluent (this connects to the journal file) 
+
+# the - g gets rid of the graphics - faster compute time
+
+# the gu flag allos you to run graphics suppressed
+
+# the fluent 3ddp means fluent in 3 dimensions - double precision
+
+#-t$nprocs works out how many processors you should use - can just use "-t2" for 2 processors
+
+# > /home/ah12g11/T0 this last bit just says to output the file to this address.
