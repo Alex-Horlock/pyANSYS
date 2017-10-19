@@ -1,0 +1,24 @@
+SetScriptVersion(Version="15.0")
+import os
+#Import SLDPRT file - now correct 01/02/15 with RJ dimensions
+Path = "H:\GDP\CAD\EditedCAD\Baseline02.SLDPRT" #Creating a new geometric
+template1 = GetTemplate( TemplateName="Fluid Flow")
+system1 = template1.CreateSystem()
+geometry1=system1.GetContainer(ComponentName="Geometry")
+geometryProperties1=geometry1.GetGeometryProperties()
+geometryProperties1.GeometryImportParameters = True
+geometryProperties1.GeometryImportParametersFilter = ""
+#Import Named Selections for SolidWorks
+geometryProperties1.GeometryImportNamedSelections = True
+geometryProperties1.GeometryImportNamedSelectionsFilter = ""
+geometryProperties1.GeometryImportCoordinateSystems = True
+geometryProperties1.GeometryImportSmartUpdate = True
+#Geometry path
+geometry1.SetFile(FilePath=Path, PlugInName="SolidWorks[4605]")
+geometry1.Update()
+meshcomp1=system1.GetComponent(Name="Mesh")
+meshcont1=system1.GetContainer(ComponentName="Mesh")
+meshcomp1.Update(AllDependencies=True)
+meshcont1.Edit(Interactive=True)
+meshcont1.SendCommand(Command="WB.AppletList.Applet(\"DSApplet\").App.Script.doToolsRunMacro(\"MESHJSSCRIPT\")")
+meshcont1.Exit()

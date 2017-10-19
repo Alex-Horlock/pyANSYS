@@ -1,0 +1,89 @@
+% Page Setup
+\usepackage[top=20mm, bottom=20mm, inner=38mm, outer=19mm]{geometry}
+\usepackage{layout}
+\setlength{\textheight}{23cm}           
+\setlength{\textwidth}{14.5cm}
+
+% Fancy Headers
+\usepackage{fancyhdr} 
+\pagestyle{fancy}
+\fancyhf{}
+%\fancyhead[L]{\textit{\footnotesize Practical Drag Reduction for the Transportation of Intermodal Containers}}
+%\fancyhead[R]{\footnotesize Lorry Drag}
+\fancyfoot{}
+\fancyhead[LE]{\textit{\footnotesize Practical Drag Reduction for the Transportation of Intermodal Containers}}
+\fancyhead[RO]{\nouppercase{\footnotesize \rightmark}}
+\fancyhead[LO]{\nouppercase{\footnotesize \leftmark}}
+\setlength{\headheight}{15pt}
+\cfoot{\thepage}
+\renewcommand\sectionmark[1]{%
+  \markright{\thesection\ #1}}
+
+%\renewcommand\chaptermark[1]{%
+%  \markleft{\thechapter\ #1}}
+
+% Set font as Arial
+\renewcommand{\rmdefault}{phv} % Arial
+\renewcommand{\sfdefault}{phv} % Arial
+
+% Set 1.5 line spacing
+\usepackage{setspace}
+\onehalfspacing
+
+%Table colours
+\usepackage[table]{xcolor}
+
+% Bibliography
+\usepackage[authoryear]{natbib}
+
+% Nomenclature
+\usepackage{nomencl}
+\usepackage{etoolbox}
+\usepackage{ragged2e}
+\usepackage{siunitx}
+
+%% Figures
+\usepackage{float} %Stops tables/figures moving around...
+\usepackage{subfigure} %Allows for side-by-side figures
+\usepackage{graphicx}
+\usepackage{caption}
+
+%% Equations
+\usepackage{amsmath} %Allows \gathered
+\usepackage{textcomp} %Gets rid of gensymb warnings
+\usepackage{gensymb} %Allows \degree
+\usepackage{mathtools}
+
+%%TikZ (for making aerofoil profiles and flow chart)
+\usepackage{tikz}
+\usepackage[latin1]{inputenc}
+\usetikzlibrary{shapes,arrows}
+
+%Allows \url
+\usepackage{hyperref}
+
+%Allows pdf to be inputted (risk assessment)
+\usepackage{pdfpages}
+
+%Multicolumns package
+\usepackage{multicol}
+
+%Landscape
+\usepackage{lscape}
+\usepackage{pdflscape}
+\usepackage[UKenglish]{babel}% http://ctan.org/pkg/babel
+
+%Allows a fourth section, subsubsubsection
+\usepackage{titlesec}
+
+%Tables
+\usepackage{tabu}
+\usepackage{longtable}
+\usepackage{booktabs}
+
+
+%no indent
+\usepackage[parfill]{parskip}
+
+% small bullet for tasks 
+\newcommand{\sbt}{\,\begin{picture}(-1,1)(-1,-3)\circle*{3}\end{picture}\ }

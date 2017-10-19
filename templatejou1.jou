@@ -1,0 +1,183 @@
+;Read in mesh
+file/read-case-data /home/tms1g10/GDP/3D/RUN1-RUN3
+;
+;Solve Unsteady
+solve/initialize/init-flow-statistics
+solve/set/time-step 0.0000001
+solve/set/data-sampling y 1 y y y y y y y y y y
+solve/set/adaptive-time-stepping y n 0.01 RUN2 0.0000001 0.001 0.5 2 1
+solve/dual-time-iterate 50000 10
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+y
+;
+display/set/contours/surfaces offsetgroundlwr ()
+;BACK OF LORRY YZ
+display/view/restore-view/right
+display/view/camera/target 0 0.4 -0.2
+display/view/camera/zoom 3
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZlwrfullpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZlwrfullpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetgroundmid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZmidfullpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZmidfullpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetgroundupr ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZuprfullpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZuprfullpressurermsRUN2.jpg
+;
+display/re-render
+display/view/restore-view/right
+display/view/camera/target 0 -0.2 -0.2
+display/view/camera/zoom 5
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZlwrpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZlwrpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetgroundmid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZmidpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZmidpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetgroundupr ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZuprpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZuprpressurermsRUN2.jpg
+;
+display/view/camera/zoom 0.05
+display/view/restore-view/bottom
+display/view/camera/roll-camera -90
+display/view/camera/target 0.19 0 -0.2
+display/view/camera/zoom 25
+;
+display/set/contours/surfaces offsetinletfwd ()
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZfwdpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZfwdpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetinletfwdmid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakefwdmidpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakefwdmidpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetinletmid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakemidpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakemidpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetinletrwdmid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdmidpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdmidpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetinletrwd ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdpressurermsRUN2.jpg
+;
+display/view/restore-view/back
+display/view/camera/roll-camera -90
+display/view/camera/target 0.19 0 0
+display/view/camera/zoom 10
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakelhspressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakelhspressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetsidemid ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakemidpressuremeanRUN2.jpg
+display/contour/rms-pressure 0 150
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakemidpressurermsRUN2.jpg
+;
+display/set/contours/surfaces offsetsiderhs ()
+display/re-render
+display/contour/mean-pressure -200 200
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakerhspressuremeanRUN2.jpg
+display/contour/rms-pressure 0 50
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakerhspressurermsRUN2.jpg
+;
+;Write finished data & data files
+file/write-case-data /home/tms1g10/GDP/3D/RUN1-RUN4
+;
+parallel/timer/usage
+exit y

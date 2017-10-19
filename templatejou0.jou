@@ -1,0 +1,418 @@
+;Read in mesh
+file/read-case /home/tms1g10/automeshed/meshRUN1.msh.gz
+;
+;Reorder domain x2 - bandwidth should be ~ 1
+mesh/reorder/reorder-domain
+mesh/reorder/reorder-domain
+mesh/reorder/reorder-domain
+mesh/check
+;
+;Repair Mesh
+mesh/repair-improve/allow-repair-at-boundaries y
+mesh/repair-improve/repair
+;
+;Improve Wake Mesh - dimensions of trailer + 2xtrailerlength back
+;Baseline
+adapt/mark-inout-hexahedron y n -0.38 0.76 -0.003 -5.07 0.4 -0.8
+adapt/adapt-to-register 0 0 0 y
+;2 Flaps
+;adapt/mark-inout-hexahedron y n -0.38 0.76 -0.08 -5.07 0.4 -0.8
+;adapt/adapt-to-register 0 0 0 y
+;adapt/mark-inout-hexahedron y n -0.38 0.76 -0.08 -0.003 -0.05 -0.35
+;adapt/adapt-to-register 0 0 0 y
+;2 Flaps TB
+;adapt/mark-inout-hexahedron y n -0.38 0.76 -0.08 -5.07 0.4 -0.8
+;adapt/adapt-to-register 0 0 0 y
+;adapt/mark-inout-hexahedron y n 0.05 0.35 -0.08 -0.003 0.4 -0.8
+;adapt/adapt-to-register 0 0 0 y
+;4 Flaps
+;adapt/mark-inout-hexahedron y n -0.38 0.76 -0.08 -5.07 0.4 -0.8
+;adapt/adapt-to-register 0 0 0 y
+;adapt/mark-inout-hexahedron y n 0.05 0.35 -0.08 -0.003 -0.05 -0.35
+;adapt/adapt-to-register 0 0 0 y
+;
+;mesh/polyhedra/convert-hanging-nodes
+;Repair mesh post-refinement
+mesh/repair-improve/repair
+;adapt/smooth-mesh
+;
+;Check mesh & output info
+mesh/check
+mesh/mesh-info 0
+mesh/quality
+mesh/size-info
+;
+;Turn on Gravity
+define/operating-conditions/gravity y -9.81 0 0
+;
+;Change values of Air to be consistent with data book
+define/materials/change-create air air y constant 1.19 n n y constant 0.0000182 n n n
+;
+;Define kw SST Turbulence Model
+define/models/viscous/kw-sst y
+;define/models/viscous/ke-realizable y
+;define/models/viscous/kw-standard y
+;
+;Define Boundary Conditions
+;Inlet
+;define/boundary-conditions/velocity-inlet inlet n y y n 0 y n 0 n -30 n 0 n y 0.2 0.051
+define/boundary-conditions/velocity-inlet inlet n y y n 0 y n 0 n -30 n 0 n n y 0.2 10
+;define/boundary-conditions/velocity-inlet inlet n y y n 0 y n 0 n -30 n 0 n n y 5 10
+;LHS Domain
+define/boundary-conditions/zone-type lhsdomain velocity-inlet 
+;define/boundary-conditions/zone-type lhsdomain pressure-outlet
+;define/boundary-conditions/velocity-inlet lhsdomain n y y n 0 y n 0 n -30 n 0 n y 0.2 0.051
+define/boundary-conditions/velocity-inlet lhsdomain n y y n 0 y n 0 n -30 n 0 n n y 0.2 10
+;define/boundary-conditions/velocity-inlet lhsdomain n y y n 0 y n 0 n -30 n 0 n n y 5 10
+;RHS Domain
+define/boundary-conditions/zone-type rhsdomain velocity-inlet
+;define/boundary-conditions/velocity-inlet rhsdomain n y y n 0 y n 0 n -30 n 0 n y 0.2 0.051
+define/boundary-conditions/velocity-inlet rhsdomain n y y n 0 y n 0 n -30 n 0 n n y 0.2 10
+;define/boundary-conditions/velocity-inlet rhsdomain n y y n 0 y n 0 n -30 n 0 n n y 5 10
+;Roof of Domain
+define/boundary-conditions/zone-type topdomain velocity-inlet
+;define/boundary-conditions/velocity-inlet topdomain n y y n 0 y n 0 n -30 n 0 n y 0.2 0.051
+define/boundary-conditions/velocity-inlet topdomain n y y n 0 y n 0 n -30 n 0 n n y 0.2 10
+;define/boundary-conditions/velocity-inlet topdomain n y y n 0 y n 0 n -30 n 0 n n y 5 10
+;Rolling road
+define/boundary-conditions/wall groundplane y motion-bc-moving n y n 30 0 -1 0 n n 0 n 0.5
+;
+;Set Drag monitor in -Y direction
+solve/monitors/force/set-drag-monitor totalcd y cab trailer wheels () y y /home/tms1g10/GDP/3D/RUN1totalcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor totalcd y cab trailer wheels lhsflap rhsflap () y y /home/tms1g10/GDP/3D/RUN1totalcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor totalcd y cab trailer wheels topflap botflap () y y /home/tms1g10/GDP/3D/RUN1totalcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor totalcd y cab trailer wheels lhsflap rhsflap topflap botflap flapjoint () y y /home/tms1g10/GDP/3D/RUN1totalcd n n 0 -1 0
+solve/monitors/force/set-drag-monitor cabcd y cab () y y /home/tms1g10/GDP/3D/RUN1cabcd n n 0 -1 0
+solve/monitors/force/set-drag-monitor trailercd y trailer () y y /home/tms1g10/GDP/3D/RUN1trailercd n n 0 -1 0
+solve/monitors/force/set-drag-monitor wheelscd y wheels () y y /home/tms1g10/GDP/3D/RUN1wheelscd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor lhsflapcd y lhsflap () y y /home/tms1g10/GDP/3D/RUN1lhsflapcd n n 0 -1 0 
+;solve/monitors/force/set-drag-monitor rhsflapcd y rhsflap () y y /home/tms1g10/GDP/3D/RUN1rhsflapcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor botflapcd y botflap () y y /home/tms1g10/GDP/3D/RUN1botflapcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor topflapcd y topflap () y y /home/tms1g10/GDP/3D/RUN1topflapcd n n 0 -1 0
+;solve/monitors/force/set-drag-monitor flapjointcd y flapjoint () y y /home/tms1g10/GDP/3D/RUN1flapjointcd n n 0 -1 0
+;
+;Set Lift monitor in X direction
+solve/monitors/force/set-lift-monitor totalcl y cab trailer wheels () y y /home/tms1g10/GDP/3D/RUN1totalcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor totalcl y cab trailer wheels lhsflap rhsflap () y y /home/tms1g10/GDP/3D/RUN1totalcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor totalcl y cab trailer wheels topflap botflap () y y /home/tms1g10/GDP/3D/RUN1totalcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor totalcl y cab trailer wheels lhsflap rhsflap topflap botflap flapjoint () y y /home/tms1g10/GDP/3D/RUN1totalcl n n 1 0 0
+solve/monitors/force/set-lift-monitor cabcl y cab () y y /home/tms1g10/GDP/3D/RUN1cabcl n n 1 0 0
+solve/monitors/force/set-lift-monitor trailercl y trailer () y y /home/tms1g10/GDP/3D/RUN1trailercl n n 1 0 0
+solve/monitors/force/set-lift-monitor wheelscl y wheels () y y /home/tms1g10/GDP/3D/RUN1wheelscl n n 1 0 0
+;solve/monitors/force/set-lift-monitor lhsflapcl y lhsflap () y y /home/tms1g10/GDP/3D/RUN1lhsflapcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor rhsflapcl y rhsflap () y y /home/tms1g10/GDP/3D/RUN1rhsflapcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor botflapcl y botflap () y y /home/tms1g10/GDP/3D/RUN1botflapcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor topflapcl y topflap () y y /home/tms1g10/GDP/3D/RUN1topflapcl n n 1 0 0
+;solve/monitors/force/set-lift-monitor flapjointcl y flapjoint () y y /home/tms1g10/GDP/3D/RUN1flapjointcl n n 1 0 0
+;
+;Set Sideforce monitor in Z direction
+solve/monitors/force/set-lift-monitor totalcz y cab trailer wheels () y y /home/tms1g10/GDP/3D/RUN1totalcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor totalcz y cab trailer wheels lhsflap rhsflap () y y /home/tms1g10/GDP/3D/RUN1totalcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor totalcz y cab trailer wheels topflap botflap () y y /home/tms1g10/GDP/3D/RUN1totalcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor totalcz y cab trailer wheels lhsflap rhsflap botflap topflap flapjoint () y y /home/tms1g10/GDP/3D/RUN1totalcz n n 0 0 1
+solve/monitors/force/set-lift-monitor cabcz y cab () y y /home/tms1g10/GDP/3D/RUN1cabcz n n 0 0 1
+solve/monitors/force/set-lift-monitor trailercz y trailer () y y /home/tms1g10/GDP/3D/RUN1trailercz n n 1 0 0
+solve/monitors/force/set-lift-monitor wheelscz y wheels () y y /home/tms1g10/GDP/3D/RUN1wheelscz n n 0 0 1
+;solve/monitors/force/set-lift-monitor lhsflapcz y lhsflap () y y /home/tms1g10/GDP/3D/RUN1lhsflapcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor rhsflapcz y rhsflap () y y /home/tms1g10/GDP/3D/RUN1rhsflapcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor botflapcz y botflap () y y /home/tms1g10/GDP/3D/RUN1botflapcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor topflapcz y topflap () y y /home/tms1g10/GDP/3D/RUN1topflapcz n n 0 0 1
+;solve/monitors/force/set-lift-monitor flapjointcz y flapjoint () y y /home/tms1g10/GDP/3D/RUN1flapjointcz n n 0 0 1
+;
+;Create lines
+surface/line-surface line1 -0.03 5.07 -0.03 -0.03 -5.07 -0.03
+surface/line-surface line2 -0.03 5.07 0.115 -0.03 -5.07 0.115
+surface/line-surface line3 -0.03 5.07 0.2 -0.03 -5.07 0.2
+surface/line-surface line4 -0.03 5.07 0.315 -0.03 -5.07 0.315
+surface/line-surface line5 -0.03 5.07 0.43 -0.03 -5.07 0.43
+;
+surface/line-surface line6 0.19 5.07 -0.03 0.19 -5.07 -0.03
+surface/line-surface line7 0.19 5.07 0.115 0.19 -5.07 0.115
+surface/line-surface line8 0.19 5.07 0.2 0.19 -5.07 0.2
+surface/line-surface line9 0.19 5.07 0.315 0.19 -5.07 0.315
+surface/line-surface line10 0.19 5.07 0.43 0.19 -5.07 0.43
+;
+surface/line-surface line11 0.41 5.07 -0.03 0.41 -5.07 -0.03
+surface/line-surface line12 0.41 5.07 0.115 0.41 -5.07 0.115
+surface/line-surface line13 0.41 5.07 0.2 0.41 -5.07 0.2
+surface/line-surface line14 0.41 5.07 0.315 0.41 -5.07 0.315
+surface/line-surface line15 0.41 5.07 0.43 0.41 -5.07 0.43
+;
+surface/line-surface line16 -0.03 -0.1 -0.03 -0.03 -0.1 0.43
+surface/line-surface line17 0.19 -0.1 1.0192 0.19 -0.1 0.43
+surface/line-surface line18 0.41 -0.1 1.0192 0.41 -0.1 0.43
+;
+surface/line-surface line19 -0.03 -0.2 1.0192 -0.03 -0.2 0.43
+surface/line-surface line20 0.19 -0.2 1.0192 0.19 -0.2 0.43
+surface/line-surface line21 0.41 -0.2 1.0192 0.41 -0.2 0.43
+;
+surface/line-surface line22 -0.03 -0.4 1.0192 -0.03 -0.4 0.43
+surface/line-surface line23 0.19 -0.4 1.0192 0.19 -0.4 0.43
+surface/line-surface line24 0.41 -0.4 1.0192 0.41 -0.4 0.43
+;
+surface/line-surface line25 -0.03 -0.8 1.0192 -0.03 -0.8 0.43
+surface/line-surface line26 0.19 -0.8 1.0192 0.19 -0.8 0.43
+surface/line-surface line27 0.41 -0.8 1.0192 0.41 -0.8 0.43
+;
+surface/point-surface P01 0.008 -0.002 -0.081
+surface/point-surface P02 0.008 -0.002 -0.159
+surface/point-surface P03 0.008 -0.002 -0.239
+surface/point-surface P04 0.008 -0.002 -0.322
+;
+surface/point-surface P05 0.078 -0.002 -0.081
+surface/point-surface P06 0.078 -0.002 -0.159
+surface/point-surface P07 0.078 -0.002 -0.239
+surface/point-surface P08 0.078 -0.002 -0.322
+;
+surface/point-surface P09 0.147 -0.002 -0.081
+surface/point-surface P10 0.146 -0.002 -0.159
+surface/point-surface P11 0.147 -0.002 -0.239
+surface/point-surface P12 0.147 -0.002 -0.322
+;
+surface/point-surface P13 0.216 -0.002 -0.081
+surface/point-surface P14 0.216 -0.002 -0.159
+surface/point-surface P15 0.217 -0.002 -0.239
+surface/point-surface P16 0.217 -0.002 -0.322
+;
+surface/point-surface P17 0.286 -0.002 -0.081
+surface/point-surface P18 0.284 -0.002 -0.159
+surface/point-surface P19 0.287 -0.002 -0.239
+surface/point-surface P20 0.285 -0.002 -0.322
+;
+surface/point-surface P21 0.010 0.032 0.002
+surface/point-surface P22 0.079 0.030 0.002
+surface/point-surface P23 0.149 0.030 0.002
+surface/point-surface P24 0.218 0.031 0.002
+surface/point-surface P25 0.289 0.031 0.002
+;
+surface/point-surface P26 0.382 0.030 -0.078
+surface/point-surface P27 0.382 0.031 -0.157
+surface/point-surface P28 0.382 0.030 -0.240
+surface/point-surface P29 0.382 0.030 -0.319
+;
+surface/point-surface P30 0.289 0.030 -0.402
+surface/point-surface P31 0.218 0.030 -0.402
+surface/point-surface P32 0.147 0.030 -0.402
+surface/point-surface P33 0.077 0.031 -0.402
+surface/point-surface P34 0.007 0.030 -0.402
+;
+surface/point-surface P35 0.050 1.982 -0.104
+surface/point-surface P36 0.050 1.982 -0.214
+surface/point-surface P37 0.050 1.982 -0.303
+surface/point-surface P38 0.133 1.982 -0.103
+surface/point-surface P39 0.133 1.982 -0.213
+surface/point-surface P40 0.133 1.982 -0.303
+surface/point-surface P41 0.216 1.982 -0.103
+surface/point-surface P42 0.216 1.982 -0.214
+surface/point-surface P43 0.216 1.982 -0.303
+surface/point-surface P44 0.300 1.982 -0.102
+surface/point-surface P45 0.300 1.982 -0.213
+surface/point-surface P46 0.300 1.982 -0.302
+;
+surface/point-surface P47 -0.002 0.299 -0.100
+surface/point-surface P48 -0.002 0.299 -0.300
+surface/point-surface P49 -0.002 0.501 -0.100
+surface/point-surface P50 -0.002 0.501 -0.300
+surface/point-surface P51 -0.002 0.827 -0.100
+surface/point-surface P52 -0.002 0.827 -0.300
+surface/point-surface P53 -0.002 1.052 -0.100
+surface/point-surface P54 -0.002 1.052 -0.300
+;
+surface/point-surface W1P1 -0.15 0.15 -0.01
+surface/point-surface W1P2 -0.15 0.15 -0.03
+surface/point-surface W2P1 -0.15 0.15 -0.39
+surface/point-surface W2P2 -0.15 0.15 -0.37
+;
+;Create Surfaces
+surface/plane-surf-aligned offsetgroundlwr groundplane 0.1 0 0
+surface/plane-surf-aligned offsetgroundmid groundplane 0.19 0 0
+surface/plane-surf-aligned offsetgroundupr groundplane 0.37 0 0
+;
+surface/plane-surf-aligned offsetinletfwd inlet 0 -0.01 0
+surface/plane-surf-aligned offsetinletfwdmid inlet 0 -0.1 0
+surface/plane-surf-aligned offsetinletmid inlet 0 -0.2 0
+surface/plane-surf-aligned offsetinletrwdmid inlet 0 -0.4 0
+surface/plane-surf-aligned offsetinletrwd inlet 0 -0.8 0
+;
+surface/plane-surf-aligned offsetsidelhs lhsdomain 0 0 -0.02
+surface/plane-surf-aligned offsetsidemid lhsdomain 0 0 -0.2
+surface/plane-surf-aligned offsetsiderhs lhsdomain 0 0 -0.38
+;
+;Field Functions
+define/custom-field-functions/define "vorticity1" dz_velocity_dy-dy_velocity_dz
+define/custom-field-functions/define "vorticity2" dx_velocity_dz-dz_velocity_dx
+define/custom-field-functions/define "vorticity3" dy_velocity_dx-dx_velocity_dy
+define/custom-field-functions/define "velocitymagxy" (x_velocity^2+y_velocity^2)^0.5
+define/custom-field-functions/define "velocitymagxz" (x_velocity^2+z_velocity^2)^0.5
+define/custom-field-functions/define "velocitymagyz" (y_velocity^2+z_velocity^2)^0.5
+;
+;Image settings
+display/set/picture/x-resolution 1920
+display/set/picture/y-resolution 1080
+display/set/contours/filled-contours y
+display/set/contours/clip-to-range n
+;
+;Images of mesh
+display/set/picture/color-mode/mono-chrome
+;
+display/surface-mesh offsetinletfwd ()
+;
+display/view/restore-view/bottom
+display/view/camera/roll-camera -90
+display/view/camera/target 0.19 0 -0.2
+display/view/camera/zoom 20
+display/surface-mesh offsetinletfwd ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakefwdmesh.jpg
+display/surface-mesh offsetinletfwdmid ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakefwdmidmesh.jpg
+display/surface-mesh offsetinletmid ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakemidmesh.jpg
+display/surface-mesh offsetinletrwdmid ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdmidmesh.jpg
+display/surface-mesh offsetinletrwd ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XZwakerwdmesh.jpg
+;
+display/view/restore-view/right
+display/view/camera/target 0 0.4 -0.2
+display/view/camera/zoom 3
+display/surface-mesh offsetgroundlwr ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZwakelwrfullmesh.jpg
+display/surface-mesh offsetgroundmid ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZwakemidfullmesh.jpg
+display/surface-mesh offsetgroundupr ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1YZwakeuprfullmesh.jpg
+;
+display/view/restore-view/back
+display/view/camera/roll-camera -90
+display/view/camera/target 0.19 0 0
+display/view/camera/zoom 10
+display/surface-mesh offsetsidelhs ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakelhsmesh.jpg
+display/surface-mesh offsetsidemid ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakemidmesh.jpg
+display/surface-mesh offsetsiderhs ()
+display/save-picture /home/tms1g10/GDP/3D/RUN1XYwakerhsmesh.jpg
+;
+display/set/picture/color-mode/color
+;
+;Compute reference values from inlet
+report/reference-values/compute/velocity-inlet inlet
+report/reference-values/area 0.22002
+report/reference-values/length 2.535
+report/reference-values/density 1.19
+report/reference-values/temperature 292.15
+report/reference-values/viscosity 0.0000182
+;
+;Set Convergence Criteria
+solve/monitors/residual/convergence-criteria 1e-05 1e-06 1e-06 1e-06 1e-06 1e-06
+;
+;Define Discretization Schemes
+solve/set/discretization-scheme/mom 0
+solve/set/discretization-scheme/k 0
+solve/set/discretization-scheme/omega 0
+;solve/set/discretization-scheme/epsilon 0
+solve/set/p-v-coupling 21
+;
+;Hybrid Initialization
+;solve/initialize/hyb-initialization
+solve/initialize/initialize-flow
+solve/initialize/fmg-initialization y
+;
+solve/set/reporting-interval 1
+report/summary y /home/tms1g10/GDP/3D/RUN1report
+;
+;Solve Steady
+solve/iterate 500
+;
+solve/set/discretization-scheme/mom 1
+solve/set/discretization-scheme/k 1
+solve/set/discretization-scheme/omega 1
+solve/iterate 500
+;
+;Unsteady Switch
+define/models/unsteady-2nd-order-bounded y
+;Define LES/RANS Hybrid
+;define/models/viscous/sas y
+;define/models/viscous/detached-eddy-simulation y spalart-allmaras y
+;solve/set/discretization-scheme/nut 1
+;
+solve/execute-commands/add-edit RUN1pic1 10 "time-step" "display/view/restore-view/right"
+solve/execute-commands/add-edit RUN1pic2 10 "time-step" "display/set/contours/surfaces offsetgroundmid ()"
+solve/execute-commands/add-edit RUN1pic3 10 "time-step" "display/view/camera/target 0 0.4 -0.2"
+solve/execute-commands/add-edit RUN1pic4 10 "time-step" "display/view/camera/zoom 3"
+solve/execute-commands/add-edit RUN1pic5 10 "time-step" "display/contour/velocitymagyz 0 25"
+solve/execute-commands/add-edit RUN1pic6 10 "time-step" "display/save-picture /home/tms1g10/GDP/3D/RUN1YZveluns%ts.jpg"
+;
+solve/execute-commands/add-edit RUN1pic7 10 "time-step" "display/view/restore-view/back"
+solve/execute-commands/add-edit RUN1pic8 10 "time-step" "display/view/camera/roll-camera -90"
+solve/execute-commands/add-edit RUN1pic9 10 "time-step" "display/set/contours/surfaces offsetsidemid ()"
+solve/execute-commands/add-edit RUN1pic10 10 "time-step" "display/view/camera/target 0.19 0 0"
+solve/execute-commands/add-edit RUN1pic11 10 "time-step" "display/view/camera/zoom 10"
+solve/execute-commands/add-edit RUN1pic12 10 "time-step" "display/contour/velocitymagxy 0 25"
+solve/execute-commands/add-edit RUN1pic13 10 "time-step" "display/save-picture /home/tms1g10/GDP/3D/RUN1XYveluns%ts.jpg" 
+;
+solve/monitors/surface/set-monitor P01P "Area-Weighted Average" pressure P01 () n n y /home/tms1g10/GDP/3D/RUN1_P01_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P02P "Area-Weighted Average" pressure P02 () n n y /home/tms1g10/GDP/3D/RUN1_P02_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P03P "Area-Weighted Average" pressure P03 () n n y /home/tms1g10/GDP/3D/RUN1_P03_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P04P "Area-Weighted Average" pressure P04 () n n y /home/tms1g10/GDP/3D/RUN1_P04_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P05P "Area-Weighted Average" pressure P05 () n n y /home/tms1g10/GDP/3D/RUN1_P05_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P06P "Area-Weighted Average" pressure P06 () n n y /home/tms1g10/GDP/3D/RUN1_P06_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P07P "Area-Weighted Average" pressure P07 () n n y /home/tms1g10/GDP/3D/RUN1_P07_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P08P "Area-Weighted Average" pressure P08 () n n y /home/tms1g10/GDP/3D/RUN1_P08_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P09P "Area-Weighted Average" pressure P09 () n n y /home/tms1g10/GDP/3D/RUN1_P09_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P10P "Area-Weighted Average" pressure P10 () n n y /home/tms1g10/GDP/3D/RUN1_P10_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P11P "Area-Weighted Average" pressure P11 () n n y /home/tms1g10/GDP/3D/RUN1_P11_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P12P "Area-Weighted Average" pressure P12 () n n y /home/tms1g10/GDP/3D/RUN1_P12_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P13P "Area-Weighted Average" pressure P13 () n n y /home/tms1g10/GDP/3D/RUN1_P13_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P14P "Area-Weighted Average" pressure P14 () n n y /home/tms1g10/GDP/3D/RUN1_P14_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P15P "Area-Weighted Average" pressure P15 () n n y /home/tms1g10/GDP/3D/RUN1_P15_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P16P "Area-Weighted Average" pressure P16 () n n y /home/tms1g10/GDP/3D/RUN1_P16_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P17P "Area-Weighted Average" pressure P17 () n n y /home/tms1g10/GDP/3D/RUN1_P17_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P18P "Area-Weighted Average" pressure P18 () n n y /home/tms1g10/GDP/3D/RUN1_P18_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P19P "Area-Weighted Average" pressure P19 () n n y /home/tms1g10/GDP/3D/RUN1_P19_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P20P "Area-Weighted Average" pressure P20 () n n y /home/tms1g10/GDP/3D/RUN1_P20_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P21P "Area-Weighted Average" pressure P21 () n n y /home/tms1g10/GDP/3D/RUN1_P21_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P22P "Area-Weighted Average" pressure P22 () n n y /home/tms1g10/GDP/3D/RUN1_P22_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P23P "Area-Weighted Average" pressure P23 () n n y /home/tms1g10/GDP/3D/RUN1_P23_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P24P "Area-Weighted Average" pressure P24 () n n y /home/tms1g10/GDP/3D/RUN1_P24_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P25P "Area-Weighted Average" pressure P25 () n n y /home/tms1g10/GDP/3D/RUN1_P25_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P26P "Area-Weighted Average" pressure P26 () n n y /home/tms1g10/GDP/3D/RUN1_P26_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P27P "Area-Weighted Average" pressure P27 () n n y /home/tms1g10/GDP/3D/RUN1_P27_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P28P "Area-Weighted Average" pressure P28 () n n y /home/tms1g10/GDP/3D/RUN1_P28_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P29P "Area-Weighted Average" pressure P29 () n n y /home/tms1g10/GDP/3D/RUN1_P29_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P30P "Area-Weighted Average" pressure P30 () n n y /home/tms1g10/GDP/3D/RUN1_P30_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P31P "Area-Weighted Average" pressure P31 () n n y /home/tms1g10/GDP/3D/RUN1_P31_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P32P "Area-Weighted Average" pressure P32 () n n y /home/tms1g10/GDP/3D/RUN1_P32_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P33P "Area-Weighted Average" pressure P33 () n n y /home/tms1g10/GDP/3D/RUN1_P33_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P34P "Area-Weighted Average" pressure P34 () n n y /home/tms1g10/GDP/3D/RUN1_P34_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P35P "Area-Weighted Average" pressure P35 () n n y /home/tms1g10/GDP/3D/RUN1_P35_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P36P "Area-Weighted Average" pressure P36 () n n y /home/tms1g10/GDP/3D/RUN1_P36_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P37P "Area-Weighted Average" pressure P37 () n n y /home/tms1g10/GDP/3D/RUN1_P37_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P38P "Area-Weighted Average" pressure P38 () n n y /home/tms1g10/GDP/3D/RUN1_P38_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P39P "Area-Weighted Average" pressure P39 () n n y /home/tms1g10/GDP/3D/RUN1_P39_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P40P "Area-Weighted Average" pressure P40 () n n y /home/tms1g10/GDP/3D/RUN1_P40_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P41P "Area-Weighted Average" pressure P41 () n n y /home/tms1g10/GDP/3D/RUN1_P41_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P42P "Area-Weighted Average" pressure P42 () n n y /home/tms1g10/GDP/3D/RUN1_P42_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P43P "Area-Weighted Average" pressure P43 () n n y /home/tms1g10/GDP/3D/RUN1_P43_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P44P "Area-Weighted Average" pressure P44 () n n y /home/tms1g10/GDP/3D/RUN1_P44_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P45P "Area-Weighted Average" pressure P45 () n n y /home/tms1g10/GDP/3D/RUN1_P45_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P46P "Area-Weighted Average" pressure P46 () n n y /home/tms1g10/GDP/3D/RUN1_P46_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P47P "Area-Weighted Average" pressure P47 () n n y /home/tms1g10/GDP/3D/RUN1_P47_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P48P "Area-Weighted Average" pressure P48 () n n y /home/tms1g10/GDP/3D/RUN1_P48_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P49P "Area-Weighted Average" pressure P49 () n n y /home/tms1g10/GDP/3D/RUN1_P49_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P50P "Area-Weighted Average" pressure P50 () n n y /home/tms1g10/GDP/3D/RUN1_P50_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P51P "Area-Weighted Average" pressure P51 () n n y /home/tms1g10/GDP/3D/RUN1_P51_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P52P "Area-Weighted Average" pressure P52 () n n y /home/tms1g10/GDP/3D/RUN1_P52_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P53P "Area-Weighted Average" pressure P53 () n n y /home/tms1g10/GDP/3D/RUN1_P53_pressure 1 y flow-time
+solve/monitors/surface/set-monitor P54P "Area-Weighted Average" pressure P54 () n n y /home/tms1g10/GDP/3D/RUN1_P54_pressure 1 y flow-time
+;
+solve/monitors/surface/set-monitor W1P1P "Area-Weighted Average" pressure W1P1 () n n y /home/tms1g10/GDP/3D/RUN1_W1P1_pressure 1 y flow-time
+solve/monitors/surface/set-monitor W1P2P "Area-Weighted Average" pressure W1P2 () n n y /home/tms1g10/GDP/3D/RUN1_W1P2_pressure 1 y flow-time
+solve/monitors/surface/set-monitor W2P1P "Area-Weighted Average" pressure W2P1 () n n y /home/tms1g10/GDP/3D/RUN1_W2P1_pressure 1 y flow-time
+solve/monitors/surface/set-monitor W2P2P "Area-Weighted Average" pressure W2P2 () n n y /home/tms1g10/GDP/3D/RUN1_W2P2_pressure 1 y flow-time
+;
+;Write finished data & data files
+file/write-case-data /home/tms1g10/GDP/3D/RUN1-0
+;
+parallel/timer/usage
+exit y

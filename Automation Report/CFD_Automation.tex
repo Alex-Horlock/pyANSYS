@@ -1,0 +1,51 @@
+\documentclass[12pt,a4paper,twoside,openright,titlepage]{report}
+
+%Import style.sty file
+\usepackage{style}
+
+\titlespacing*{\section}
+{0pt}{-3.25ex plus 1ex minus .2ex}{0ex plus .2ex}
+
+\newenvironment{bottompar}{\par\vspace*{\fill}}
+
+\renewcommand\thesection{\arabic{section}}
+\renewcommand\thesubsection{\thesection.\arabic{subsection}}
+\renewcommand\thesubsubsection{\thesubsection.\arabic{subsubsection}}
+
+\setlength{\parskip}{1pt plus 0.15pt minus 0.15pt}
+\titlespacing\section{0pt}{0pt plus 0pt minus 0.1pt}{0pt plus 0.1pt minus 0.1pt}
+
+
+\begin{document}
+\pagenumbering{roman}
+
+%% Title Page
+\input{titlepage.tex}
+\thispagestyle{empty}
+\clearpage
+
+\pagenumbering{arabic}  % Return to normal numbers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Introduction
+\thispagestyle{plain}
+\section{Introduction}
+
+For the 2014/2015 GDP903 - 'Practical Drag Reduction of Intermodal Containers for Road Transport' a large amount of CFD was carried out using varied geometries and modeling conditions. The group found that the ANSYS and Fluent user interfaces took a significant amount of time to set up the problem, reducing the scope of simulations that could be run in the limited time frame. To that end an effort was made to automate as much of the process as possible. This document outlines the method we used, as well as all the code, in the hope of allowing future students to progress further and faster from the tedious meshing to the interesting analysis of results. It serves only as a guide and is by no means the only way to solve the various issues, however it is a lot better than clicking so we hope you find it useful.\\
+
+In summary, this document should give you examples of how to complete the following task with a single click. Generate, change and save SolidWorks files. Import them to ANSYS Workbench. Generate and save a mesh based on your stated parameters (Inflation edge sizing etc). Export that mesh to lyceum if required. Run the simulation on Lyceum using a journal file. Generate a gif for time dependent simulations if required.\\
+
+\section{Geometry Generation using VBA/Python}
+
+
+\section{Mesh generation using .Wbjn and .js file with Python}
+
+
+\section{Uploading Files to Lyceum using Python}
+
+
+\section{Running Simulations using Journal Files}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

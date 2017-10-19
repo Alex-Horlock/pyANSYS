@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=16
+cd $PBS_O_WORKDIR
+nprocs=`wc -l $PBS_NODEFILE | awk '{ print $1 }'`
+#Copy mesh from Iridis
+scp iridis:/scratch/tms1g10/meshes/meshRUN1.msh.gz /home/tms1g10/automeshed/
+#Run Fluent
+module load fluent/15.0
+fluent 3ddp -t$nprocs -gu -i /home/tms1g10/GDP/3D/RUN1-0.jou > /home/tms1g10/GDP/3D/RUN1-0.out
+#Create job folder on Iridis
+ssh iridis mkdir -p /scratch/tms1g10/results/RUN1
+ssh iridis mkdir -p /scratch/tms1g10/results/RUN1/casdat
+ssh iridis mkdir -p /scratch/tms1g10/results/RUN1/img
+ssh iridis mkdir -p /scratch/tms1g10/results/RUN1/setup
+ssh iridis mkdir -p /scratch/tms1g10/results/RUN1/lines
+#Copy cas/dat files to Iridis
+gzip /home/tms1g10/GDP/3D/RUN1-0.cas
+gzip /home/tms1g10/GDP/3D/RUN1-0.dat
+scp /home/tms1g10/GDP/3D/RUN1-0.cas.gz iridis:/scratch/tms1g10/results/RUN1/casdat/
+scp /home/tms1g10/GDP/3D/RUN1-0.dat.gz iridis:/scratch/tms1g10/results/RUN1/casdat/
+rm /home/tms1g10/GDP/3D/RUN1-0.cas.gz
+rm /home/tms1g10/GDP/3D/RUN1-0.dat.gz
+#Copy mesh to Iridis
+scp /home/tms1g10/automeshed/meshRUN1.msh.gz iridis:/scratch/tms1g10/meshes/
+rm /home/tms1g10/automeshed/meshRUN1.msh.gz
+#Copy images to Iridis
+scp /home/tms1g10/GDP/3D/RUN1*jpg iridis:/scratch/tms1g10/results/RUN1/img/
+rm /home/tms1g10/GDP/3D/RUN1*jpg
+#Submit Job
+qsub /home/tms1g10/GDP/3D/RUN1-1.run
